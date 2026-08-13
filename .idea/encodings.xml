@@ -3,5 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/03_StreamOutput/logfile/app.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/07_RAG/logfile/app.log" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/08_MCP/logfile/app.log" charset="GBK" />
   </component>
 </project>
