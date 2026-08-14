@@ -15,4 +15,6 @@ dependencies = [
     "langchain-text-splitters>=1.1.2",
     "langgraph-checkpoint-postgres>=3.1.2",
     "pypdf>=6.15.0",
+    "langfuse>=2.0.0",
+    "pymilvus>=3.0.1",
 ]

@@ -32,3 +32,9 @@ class Config:
     # MCP Server服务器参数
     MCP_SERVER_HOST = "127.0.0.1"
     MCP_SERVER_PORT = 8010
+
+    # Langfuse服务参数(LangSmith平替方案)
+    LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
+    LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+    LANGFUSE_BASE_URL = "http://localhost:3000"
+    LANGFUSE_TRACING_ENVIRONMENT = "development"
