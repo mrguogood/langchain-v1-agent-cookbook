@@ -17,4 +17,6 @@ dependencies = [
     "pypdf>=6.15.0",
     "langfuse>=2.0.0",
     "pymilvus>=3.0.1",
+    "fastapi>=0.141.1",
+    "gradio>=6.24.0",
 ]

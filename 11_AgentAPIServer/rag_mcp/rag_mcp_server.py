@@ -208,10 +208,3 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         logger.info("程序异常终止。")
         # 返回程序异常的错误信息
         return [TextContent(type="text", text="\n主程序执行异常，程序异常终止")]
-
-
-# 主程序入口
-if __name__ == "__main__":
-
-    # 初始化并运行服务器，使用streamable_http传输协议
-    mcp.run(transport="streamable_http")

@@ -1,5 +1,6 @@
 # 导入操作系统模块，用于处理文件路径、环境变量等与操作系统相关的功能
 import os
+import time
 
 # 定义一个统一配置类，用于集中管理项目中的所有常量配置
 class Config:
@@ -37,3 +38,13 @@ class Config:
     # MCP Server服务器参数
     MCP_SERVER_HOST = "127.0.0.1"
     MCP_SERVER_PORT = 8010
+
+    # FastAPI 接口服务器参数
+    API_SERVER_HOST = "0.0.0.0"
+    API_SERVER_PORT = 8200
+    API_BASE_URL = "http://localhost:8200"
+
+    # 配置Gradio UI相关参数
+    BASE_URL = "http://localhost:8200"
+    USER_ID = "user_100"
+    THREAD_ID = "gradio_thread_" + str(int(time.time()))
