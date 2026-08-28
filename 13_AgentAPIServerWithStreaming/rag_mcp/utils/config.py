@@ -13,11 +13,6 @@ class Config:
     # 配置日志轮转时最多保留的备份文件数量，这里设置为保留 3 个历史日志文件
     BACKUP_COUNT = 3
 
-    # PostgreSQL数据库配置参数
-    DB_URI = os.getenv("DB_URI", "postgresql://postgres:123456@localhost:5432/langChainTest?sslmode=disable")
-    MIN_SIZE = 5
-    MAX_SIZE = 10
-
     # 配置使用的大模型类型
     # - "openai"：调用 OpenAI GPT 系列模型
     # - "qwen"：调用阿里通义千问大模型
@@ -25,20 +20,11 @@ class Config:
     # - "ollama"：调用本地部署的开源大模型（如通过 Ollama 服务）
     LLM_TYPE = "qwen"
 
-    # 配置prompt文件所在路径
-    SYSTEM_PROMPT_TMPL = "prompt/system_prompt_tmpl.md"
-    HUMAN_PROMPT_TMPL = "prompt/human_prompt_tmpl.md"
+    # MCP Server服务器参数
+    MCP_SERVER_HOST = "127.0.0.1"
+    MCP_SERVER_PORT = 8010
 
     # Milvus数据库相关参数
     MILVUS_URI = "http://localhost:19530"
     MILVUS_DB_NAME = "milvus_database"
     MILVUS_COLLECTION_NAME = "my_collection_demo_chunked"
-
-    # MCP Server服务器参数
-    MCP_SERVER_HOST = "127.0.0.1"
-    MCP_SERVER_PORT = 8010
-
-    # FastAPI 接口服务器参数
-    API_SERVER_HOST = "0.0.0.0"
-    API_SERVER_PORT = 8200
-    API_BASE_URL = "http://localhost:8200"

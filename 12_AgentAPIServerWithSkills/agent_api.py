@@ -98,7 +98,7 @@ app = FastAPI(
     # API 标题
     title="ReAct Agent API",
     # API 描述
-    description="带有 HITL 功能的智能体 API 接口服务(南哥AGI研习社)",
+    description="带有 HITL 功能的智能体 API 接口服务",
     # 版本号
     version="1.0.0",
     # 绑定生命周期管理器
@@ -202,7 +202,7 @@ async def create_agent_instance() -> Any:
 # 核心运行函数：执行 Agent 并处理 HITL 中断逻辑
 async def run_agent_with_hitl(agent: Any, user_content: str, config: dict, context: Context) -> Dict[str, Any]:
     # 写入一条固定的长期记忆（示例用，实际项目中应根据业务动态写入）
-    await write_long_term_info("user_001", "南哥")
+    await write_long_term_info("user_001", "gcs")
 
     # 第一次调用 Agent，传入用户消息
     result = await agent.ainvoke(
@@ -359,5 +359,17 @@ async def intervene(request: InterveneRequest):
 
 # 主程序入口：使用 uvicorn 启动 FastAPI 服务
 if __name__ == "__main__":
-    # 启动服务
-    uvicorn.run(app, host=Config.API_SERVER_HOST, port=Config.API_SERVER_PORT)
+    import sys
+
+    # Windows + Python 3.13 默认使用 ProactorEventLoop，与 psycopg 异步驱动不兼容
+    # 方案：通过 uvicorn 的 loop 参数（支持 "module:attribute" 导入格式），
+    # 指定 asyncio.SelectorEventLoop 作为事件循环工厂
+    if sys.platform == "win32":
+        uvicorn.run(
+            app,
+            host=Config.API_SERVER_HOST,
+            port=Config.API_SERVER_PORT,
+            loop="asyncio:SelectorEventLoop"
+        )
+    else:
+        uvicorn.run(app, host=Config.API_SERVER_HOST, port=Config.API_SERVER_PORT)
