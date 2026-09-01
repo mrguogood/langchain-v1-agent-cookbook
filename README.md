@@ -37,6 +37,8 @@
 | [09_ObservabilityAndEvaluation](#09observabilityandevaluation) | 可观测性 | Langfuse、Tracing、Prompt管理 |
 | [10_RagWithMilvus](#10ragwithmilvus) | 向量数据库 | Milvus、全文/语义/混合搜索 |
 | [11_AgentAPIServer](#11agentapiserver) | API服务 | FastAPI、Gradio、多会话管理 |
+| [13_AgentAPIServerWithStreaming](#13agentapiserverwithstreaming) | 流式API服务 | SSE、流式输出、HITL续流、Skill技能 |
+| [14_AgentAPIServerWithPlaywright](#14agentapiserverwithplaywright) | 浏览器工具集成 | Playwright、动态网页抓取、浏览器HITL |
 
 ---
 
@@ -66,6 +68,10 @@ langchain-v1-agent-cookbook/
 │   └── 大规模向量检索与 Milvus 集成
 ├── 11_AgentAPIServer/                # 🌐 Agent API 服务
 │   └── 生产级 Agent 服务化部署方案
+├── 13_AgentAPIServerWithStreaming/   # ⚡ 流式 API 服务（SSE）
+│   └── 基于 SSE 的流式输出、HITL 续流与 Skill 技能集成
+├── 14_AgentAPIServerWithPlaywright/  # 🕷️ 浏览器工具集成（Playwright）
+│   └── 集成 Playwright 浏览器工具，支持动态网页抓取与 HITL
 ├── pyproject.toml                    # 项目依赖与配置
 └── README.md                         # 项目说明文档
 ```
@@ -350,6 +356,119 @@ uv run python 11_AgentAPIServer/api_test.py
 
 ---
 
+### 13_AgentAPIServerWithStreaming
+
+**🎯 目标**：在 11_AgentAPIServer 基础上，实现基于 SSE 的流式输出与 HITL 续流，并集成 Skill 技能体系
+
+**核心特性**：
+- ⚡ **SSE 流式输出**：`POST /ask/stream` 返回 Server-Sent Events，前端逐字/逐段展示 Agent 回答
+- 🔄 **HITL 续流**：流式过程中遇人工审核中断，发送 `interrupted` 事件；恢复流程通过 `POST /intervene/stream` 提交决策，实现多轮人机混合
+- 🧩 **Skill 技能体系**：按需加载 `summarize`（摘要）、`translate`（翻译）、`text_inspect`（文本分析）等专项技能
+- 🔗 **MCP 协议集成**：通过 rag_mcp_server 提供向量检索工具
+- 🗄️ **Milvus 向量数据库**：支持全文搜索、语义搜索、混合搜索
+- 💾 **短期+长期记忆**：PostgreSQL 持久化
+- 👥 **多会话与用户隔离**：thread_id / user_id
+
+**API 接口**：
+| 方法 | 路径                | 说明                            |
+| :--: | :------------------ | :----------------------------- |
+| POST | `/ask`              | 启动 Agent 执行（非流式）       |
+| POST | `/ask/stream`       | 启动 Agent 执行（SSE 流式）     |
+| POST | `/intervene`        | 提交人工决策，恢复执行（非流式） |
+| POST | `/intervene/stream` | 提交人工决策，恢复执行（SSE 流式） |
+
+**SSE 事件格式**：
+| type         | 说明       | 示例 |
+| :----------- | :--------- | :--- |
+| `token`      | 模型文本片段 | `{"type": "token", "content": "你好"}` |
+| `tool_output` | 工具节点返回 | `{"type": "tool_output", "content": "工具执行结果..."}` |
+| `completed`  | 正常结束     | `{"type": "completed", "result": "完整回答文本"}` |
+| `interrupted` | HITL 中断  | `{"type": "interrupted", "interrupt_details": {...}}` |
+
+**运行方式**：
+```python
+# 1、Milvus 向量数据库测试
+cd 13_AgentAPIServerWithStreaming/milvus
+uv run python 01_create_database.py
+uv run python 02_create_collection.py
+uv run python 03_insert_data.py
+uv run python 04_basic_earch.py
+uv run python 05_full_text_search.py
+uv run python 06_hybrid_search.py
+
+# 2、MCP Server 测试
+cd ../rag_mcp
+uv run python mix_text_search.py
+uv run python mcp_start.py
+uv run python rag_mcp_server_test.py
+
+# 3、Agent 测试
+cd ..
+uv run python agent_api.py
+uv run python api_test.py                 # 测试非流式输出
+uv run python api_test.py --stream --debug  # 测试流式输出
+```
+
+---
+
+### 14_AgentAPIServerWithPlaywright
+
+**🎯 目标**：在 13_AgentAPIServerWithStreaming 基础上，集成 Playwright 浏览器工具，使 Agent 具备动态网页抓取能力
+
+**核心特性**：
+- 🕷️ **Playwright 浏览器工具**：`navigate_browser`、`extract_text`、`extract_hyperlinks`、`click_element`、`get_elements`、`current_webpage`、`previous_webpage`
+- 🌐 **真实浏览器渲染**：支持 JavaScript 动态页面、SPA 应用，非静态 HTML 抓取
+- 🛡️ **浏览器 HITL 保护**：`navigate_browser`、`click_element` 默认触发人工审核，防范安全风险
+- ⚡ **SSE 流式输出**：`POST /ask/stream` 实时推送 token/工具结果/HITL 中断
+- 🔄 **HITL 续流**：多轮人机混合，支持 approve / edit / reject
+- 🧩 **Skill 技能体系**：按需加载摘要、翻译、文本分析等技能
+- 🔗 **MCP 协议集成**：rag_mcp_server 提供向量检索
+- 🗄️ **Milvus 向量数据库**：全文/语义/混合搜索
+- 💾 **短期+长期记忆**：PostgreSQL 持久化
+
+**Playwright 工具一览**：
+| 工具                 | 说明                         | HITL 审核 |
+| :------------------- | :--------------------------- | :------: |
+| `navigate_browser`   | 打开指定 URL                 |    ✅    |
+| `extract_text`       | 提取当前页可见文本           |    ❌    |
+| `extract_hyperlinks` | 提取当前页超链接             |    ❌    |
+| `click_element`      | 按 CSS 选择器点击元素        |    ✅    |
+| `get_elements`       | 按 CSS 选择器读取元素属性    |    ❌    |
+| `current_webpage`    | 获取当前页面 URL             |    ❌    |
+| `previous_webpage`   | 返回浏览器历史上一页         |    ❌    |
+
+**运行方式**：
+```python
+# 安装 Playwright 浏览器驱动（首次使用）
+pip install playwright lxml beautifulsoup4
+playwright install
+
+# 1、Milvus 向量数据库测试
+cd 14_AgentAPIServerWithPlaywright/milvus
+uv run python 01_create_database.py
+uv run python 02_create_collection.py
+uv run python 03_insert_data.py
+uv run python 04_basic_earch.py
+uv run python 05_full_text_search.py
+uv run python 06_hybrid_search.py
+
+# 2、MCP Server 测试
+cd ../rag_mcp
+uv run python mix_text_search.py
+uv run python mcp_start.py
+uv run python rag_mcp_server_test.py
+
+# 3、Agent 测试
+cd ..
+uv run python agent_api.py
+uv run python api_test.py                              # 测试非流式输出
+uv run python api_test.py --stream --debug             # 测试流式输出
+uv run python api_test.py --playwright --stream --debug  # 浏览器工具测试
+uv run python api_test_plus.py --playwright --stream --debug  # 自然语言长指令测试
+```
+
+---
+
 ## 🛠️ 技术栈
 
 |   类别   | 技术             | 说明               |
@@ -367,7 +486,7 @@ uv run python 11_AgentAPIServer/api_test.py
 
 ## 🗺️ 学习路径建议
 
-***初学者路径： 01 → 02 → 03 ↓ 进阶路径： 04 → 05 → 06 ↓ 高级路径： 07 → 08 → 09 ↓ 实战路径： 10 → 11**
+***初学者路径： 01 → 02 → 03 ↓ 进阶路径： 04 → 05 → 06 ↓ 高级路径： 07 → 08 → 09 ↓ 实战路径： 10 → 11 → 13 → 14**
 
 ### 学习建议
 
