@@ -3,7 +3,7 @@ name = "langchain-v1-agent-cookbook"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10,<3.14"
 dependencies = [
     "concurrent-log-handler>=0.9.29",
     "dashscope>=1.26.6",
@@ -19,4 +19,5 @@ dependencies = [
     "pymilvus>=3.0.1",
     "fastapi>=0.141.1",
     "gradio>=6.24.0",
+    "playwright>=1.62.0",
 ]

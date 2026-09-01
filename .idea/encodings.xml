@@ -7,5 +7,6 @@
     <file url="file://$PROJECT_DIR$/10_RagWithMilvus/milvus/logfile/app.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/11_AgentAPIServer/logfile/app.log" charset="GBK" />
     <file url="file://$PROJECT_DIR$/11_AgentAPIServer/milvus/logfile/app.log" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/14_AgentAPIServerWithPlaywright/logfile/app.log" charset="GBK" />
   </component>
 </project>

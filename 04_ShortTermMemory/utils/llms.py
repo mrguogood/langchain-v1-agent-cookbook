@@ -16,7 +16,7 @@ MODEL_CONFIGS = {
     # 使用自定义 openai 代理服务的配置
     "openai": {
         # LLM 服务的基础 URL
-        "base_url": "https://nangeai.top/v1",
+        "base_url": "https://model_provider_url/v1",
         # 调用该服务所需的 API Key
         "api_key": os.getenv("OPENAI_API_KEY", ""),
         # 对话模型名称

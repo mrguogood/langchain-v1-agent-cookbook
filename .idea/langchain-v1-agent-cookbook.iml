@@ -3,6 +3,19 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/01_Quickstart" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/02_PromptTemplate" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/03_StreamOutput" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/04_ShortTermMemory" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/05_LongTermMemory" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/06_HumanInTheLoop" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/07_RAG" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/08_MCP" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/09_ObservabilityAndEvaluation" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/10_RagWithMilvus" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/11_AgentAPIServer" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/12_AgentAPIServerWithSkills" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/13_AgentAPIServerWithStreaming" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/14_AgentAPIServerWithPlaywright" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="uv (langchain-v1-agent-cookbook)" jdkType="Python SDK" />
